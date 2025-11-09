@@ -31,3 +31,15 @@ export function generateRandomCoordinate(cityName?: string): { latitude: number;
 export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : '';
 }
+
+export function shortenName(fullName: string): string {
+  const parts = fullName.trim().split(' ');
+
+  if (parts.length < 2) {
+    return fullName.substring(0, 15);
+  }
+
+  const firstName = parts[0];
+  const lastName = parts.slice(1).join(' ');
+  return `${firstName[0]}. ${lastName}`;
+}
