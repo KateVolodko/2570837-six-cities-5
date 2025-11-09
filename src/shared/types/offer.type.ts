@@ -1,4 +1,5 @@
 import { CITIES, HOUSING_TYPE, GOODS } from '../constants/app.constants.js';
+import { User } from './user.type.js';
 
 export type City = typeof CITIES[number];
 export type HousingType = typeof HOUSING_TYPE[number];
@@ -27,7 +28,7 @@ export interface Offer {
   maxAdults: number;
   price: number;
   goods: Good[];
-  author: string;
+  author: User;
   commentsCount: number;
   latitude: number;
   longitude: number;
