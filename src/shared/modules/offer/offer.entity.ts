@@ -33,6 +33,13 @@ export class CitySchema {
   public longitude!: number;
 }
 
+export class LocationSchema {
+  @prop({ required: true, type: () => Number, min: MIN_LATITUDE, max: MAX_LATITUDE })
+  public latitude!: number;
+
+  @prop({ required: true, type: () => Number, min: MIN_LONGITUDE, max: MAX_LONGITUDE })
+  public longitude!: number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}
@@ -188,19 +195,13 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    min: MIN_LATITUDE,
-    max: MAX_LATITUDE,
-    type: () => Number
+    type: () => LocationSchema,
+    _id: false
   })
-  public latitude!: number;
-
-  @prop({
-    required: true,
-    min: MIN_LONGITUDE,
-    max: MAX_LONGITUDE,
-    type: () => Number
-  })
-  public longitude!: number;
+  public location!: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export const OfferModel = getModelForClass(OfferEntity);
