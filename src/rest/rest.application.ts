@@ -17,7 +17,7 @@ export class RestApplication {
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
     @inject(Component.OfferController) private readonly offerController: Controller,
     @inject(Component.UserController) private readonly userController: Controller,
-    @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter
+    @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
     @inject(Component.CommentController) private readonly commentController: Controller,
   ) {
     this.server = express();
@@ -48,6 +48,14 @@ export class RestApplication {
 
   private async _initMiddleware() {
     this.server.use(express.json());
+    this.server.use(
+      '/upload',
+      express.static(this.config.get('UPLOAD_DIRECTORY'))
+    );
+    this.server.use(
+      '/static',
+      express.static(this.config.get('STATIC_DIRECTORY'))
+    );
   }
 
   private async _initExceptionFilters() {
