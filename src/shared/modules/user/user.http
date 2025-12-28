@@ -3,8 +3,8 @@ POST http://localhost:4000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john@example.com",
+  "name": "Test Test",
+  "email": "test@example.com",
   "password": "123456",
   "type": "обычный"
 }
@@ -16,31 +16,61 @@ POST http://localhost:4000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "Jane Pro",
-  "email": "jane@example.com",
+  "name": "Test Pro",
+  "email": "testPro@example.com",
   "password": "123456",
   "type": "pro"
 }
 
 ###
 
-### Авторизация пользователя
+### Авторизация пользователя (возвращает JWT)
 POST http://localhost:4000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "john@example.com",
+  "email": "test@example.com",
   "password": "123456"
 }
 
 ###
 
-### Выход из системы
+### Выход из системы (только для авторизованных)
 POST http://localhost:4000/users/logout HTTP/1.1
+Authorization: Bearer <token>
 
 ###
 
-### Проверка авторизации
+### Проверка авторизации (только для авторизованных)
 GET http://localhost:4000/users/check HTTP/1.1
+Authorization: Bearer <token>
+
+###
+
+### Загрузка аватара пользователя (только для авторизованных)
+POST http://localhost:4000/users/68fe621b3f2769ae2729a5dc/avatar HTTP/1.1
+Authorization: Bearer <token>
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="avatar"; filename="test-avatar.jpg"
+Content-Type: image/jpeg
+
+< ./test-avatar.jpg
+--boundary--
+
+###
+
+### Загрузка аватара - невалидный userId (должен вернуть 400)
+POST http://localhost:4000/users/invalid-id/avatar HTTP/1.1
+Authorization: Bearer <token>
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="avatar"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test-avatar.jpg
+--boundary--
 
 ###
