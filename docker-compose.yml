@@ -1,20 +1,23 @@
+version: "3.9"
 services:
   db:
     image: mongo:4.2
     restart: always
-    container_name: buy-and-sell_mongodb
+    container_name: six-cities_mongodb
+    env_file:
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: pass
     ports:
       - 27017:27017
     volumes:
-      - buy-and-sell_data:/data/db
+      - six-cities_data:/data/db
 
   db_ui:
     image: mongo-express:latest
     restart: always
-    container_name: buy-and-sell_mongo_express
+    container_name: six-cities_mongo_express
     ports:
       - 8081:8081
     environment:
@@ -25,4 +28,4 @@ services:
       - db
 
 volumes:
-  buy-and-sell_data:
+  six-cities_data:

@@ -18,7 +18,6 @@ export function createOffer(offerData: string): Offer {
     maxAdults,
     price,
     goods,
-    author,
     authorName,
     authorEmail,
     authorAvatar,

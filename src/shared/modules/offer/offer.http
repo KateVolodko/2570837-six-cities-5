@@ -1,15 +1,17 @@
-### Get all offers
+### Получить офферы (доступно без авторизации)
 GET http://localhost:4000/offers HTTP/1.1
 
-### Get offers with limit
+### Получить офферы с лимитом 10
 GET http://localhost:4000/offers?limit=10 HTTP/1.1
+Authorization: Bearer <token>
 
-### Get single offer by ID
+### Получить оффер по ID (доступно без авторизации)
 GET http://localhost:4000/offers/68fe769475b8ac83b78ec8e9 HTTP/1.1
 
-### Create new offer
+### Создать новый оффер (только для авторизованных пользователей)
 POST http://localhost:4000/offers HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "title": "Beautiful apartment in Amsterdam",
@@ -27,33 +29,37 @@ Content-Type: application/json
   "maxAdults": 4,
   "price": 15000,
   "goods": ["Breakfast", "Air conditioning", "Laptop friendly workspace"],
-  "authorId": "68fe621b3f2769ae2729a5dc",
   "location": {
     "latitude": 52.370216,
     "longitude": 4.895168
   }
 }
 
-### Update offer
+### Обновить оффер (только для авторизованных пользователей)
 PATCH http://localhost:4000/offers/68fe769475b8ac83b78ec8e9 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
-  "title": "Updated apartment title",
-  "price": 18000
+  "title": "New apartment title",
+  "price": 26000
 }
 
-### Delete offer
+### Удалить оффер (только для авторизованных пользователей)
 DELETE http://localhost:4000/offers/68fe769475b8ac83b78ec8e9 HTTP/1.1
+Authorization: Bearer <token>
 
-### Get premium offers by city
+### Получить премиум офферы по городу (доступно без авторизации)
 GET http://localhost:4000/offers/premium/Amsterdam HTTP/1.1
 
-### Get favorite offers
+### Получить избранные офферы (только для авторизованных пользователей)
 GET http://localhost:4000/offers/favorites HTTP/1.1
+Authorization: Bearer <token>
 
-### Add offer to favorites
+### Добавить оффер в избранное (только для авторизованных пользователей)
 POST http://localhost:4000/offers/68fe769475b8ac83b78ec8e9/favorite HTTP/1.1
+Authorization: Bearer <token>
 
-### Remove offer from favorites
+### Удалить оффер из избранного (только для авторизованных пользователей)
 DELETE http://localhost:4000/offers/68fe769475b8ac83b78ec8e9/favorite HTTP/1.1
+Authorization: Bearer <token>

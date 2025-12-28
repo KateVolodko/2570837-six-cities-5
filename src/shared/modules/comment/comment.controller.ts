@@ -11,6 +11,7 @@ import { CreateCommentDto } from './dto/create-comment.dto.js';
 import { ValidateObjectIdMiddleware } from '../../libs/rest/middleware/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../libs/rest/middleware/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../libs/rest/middleware/document-exists.middleware.js';
+import { PrivateRouteMiddleware } from '../../libs/rest/middleware/private-route.middleware.js';
 
 @injectable()
 export class CommentController extends BaseController {
@@ -38,6 +39,7 @@ export class CommentController extends BaseController {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new ValidateDtoMiddleware(CreateCommentDto),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
@@ -55,8 +57,10 @@ export class CommentController extends BaseController {
     const { offerId } = req.params;
     const body = req.body as CreateCommentDto;
 
-    // TODO: потом будем получать из JWT
-    const userId = '68fe621b3f2769ae2729a5dc';
+    if (!req.tokenPayload) {
+      throw new Error('User not authenticated');
+    }
+    const { id: userId } = req.tokenPayload;
 
     const comment = await this.commentService.create({
       ...body,
