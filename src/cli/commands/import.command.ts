@@ -45,17 +45,23 @@ export class ImportCommand implements Command {
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
 
+    const cityDto = {
+      name: offer.city.NAME,
+      latitude: offer.city.LATITUDE,
+      longitude: offer.city.LONGITUDE
+    };
+
     await this.offerService.create({
       title: offer.title,
       description: offer.description,
-      city: offer.city,
-      previewImage: offer.previewImage,
-      images: offer.images,
+      city: cityDto,
+      previewPhoto: offer.previewPhoto,
+      photoes: offer.photoes,
       isPremium: offer.isPremium,
       type: offer.type,
-      bedrooms: offer.bedrooms,
+      bedroomsCount: offer.bedroomsCount,
       maxAdults: offer.maxAdults,
-      price: offer.price,
+      rentCost: offer.rentCost,
       goods: offer.goods,
       authorId: user.id,
       location: offer.location,

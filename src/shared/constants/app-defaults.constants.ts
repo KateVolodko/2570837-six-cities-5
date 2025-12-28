@@ -1,0 +1,5 @@
+export const DEFAULT_COUNTS = {
+  OFFER_COUNT: 60,
+  PREMIUM_OFFER_COUNT: 3,
+  DEFAULT_COMMENT_COUNT: 50,
+} as const;

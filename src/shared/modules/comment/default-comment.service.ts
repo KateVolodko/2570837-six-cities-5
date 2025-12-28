@@ -6,7 +6,7 @@ import { CommentEntity } from './comment.entity.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
 import { OfferService } from '../offer/offer-service.interface.js';
 import { Logger } from '../../libs/logger/index.js';
-import { DEFAULT_COMMENT_COUNT } from '../../constants/app.constants.js';
+import { DEFAULT_COUNTS } from '../../constants/index.js';
 
 @injectable()
 export class DefaultCommentService implements CommentService {
@@ -30,7 +30,7 @@ export class DefaultCommentService implements CommentService {
     return this.commentModel
       .find({offerId})
       .sort({ createdAt: -1 })
-      .limit(DEFAULT_COMMENT_COUNT)
+      .limit(DEFAULT_COUNTS.DEFAULT_COMMENT_COUNT)
       .populate('userId');
   }
 

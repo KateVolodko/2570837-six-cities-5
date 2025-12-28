@@ -1,7 +1,7 @@
 import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
-import { User, UserType } from '../../types/index.js';
+import { User } from '../../types/index.js';
 import { createSHA256 } from '../../helpers/index.js';
-import { USER_TYPE, MIN_NAME_LENGTH, MAX_NAME_LENGTH } from '../../constants/app.constants.js';
+import { USER_TYPES, TEXT_LIMITS, UserType } from '../../constants/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface UserEntity extends defaultClasses.Base {}
@@ -18,8 +18,8 @@ const DEFAULT_AVATAR_PATH = '/static/default-avatar.jpg';
 export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({
     required: true,
-    minlength: [MIN_NAME_LENGTH, 'Name must be at least 1 character long'],
-    maxlength: [MAX_NAME_LENGTH, 'Name cannot exceed 15 characters'],
+    minlength: [TEXT_LIMITS.MIN_NAME_LENGTH, 'Name must be at least 1 character long'],
+    maxlength: [TEXT_LIMITS.MAX_NAME_LENGTH, 'Name cannot exceed 15 characters'],
     trim: true,
     type: () => String
   })
@@ -50,8 +50,8 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
   @prop({
     required: true,
-    enum: USER_TYPE,
-    default: USER_TYPE[0],
+    enum: USER_TYPES,
+    default: USER_TYPES[0],
     type: () => String
   })
   public type!: UserType;

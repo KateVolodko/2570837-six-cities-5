@@ -12,21 +12,15 @@ import {
 import {
   CITIES,
   GOODS,
-  HOUSING_TYPE,
-  USER_TYPE,
-  MIN_PRICE,
-  MAX_PRICE,
-  MIN_RATING,
-  MAX_RATING,
-  MIN_ROOMS,
-  MAX_ROOMS,
-  MIN_ADULTS,
-  MAX_ADULTS,
-  MIN_COMMENTS,
-  MAX_COMMENTS,
-  FIRST_WEEK_DAY,
-  LAST_WEEK_DAY
-} from '../../constants/app.constants.js';
+  HOUSING_TYPES,
+  USER_TYPES,
+  PRICE_LIMITS,
+  RATING_LIMITS,
+  ROOM_LIMITS,
+  GUEST_LIMITS,
+  COMMENT_LIMITS,
+  WEEK_DAYS
+} from '../../constants/index.js';
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) {}
@@ -35,30 +29,30 @@ export class TSVOfferGenerator implements OfferGenerator {
     const title = getRandomItem<string>(this.mockData.titles).toString();
     const description = getRandomItem<string>(this.mockData.descriptions).toString();
     const randomCity = getRandomItem([...CITIES]);
-    const city = randomCity.name.toString();
-    const previewImage = getRandomItem<string>(this.mockData.images).toString();
-    const imageCount = generateRandomValue(3, 6);
-    const images = Array.from(
-      { length: imageCount },
+    const city = randomCity.NAME.toString();
+    const previewPhoto = getRandomItem<string>(this.mockData.images).toString();
+    const photoesCount = generateRandomValue(3, 6);
+    const photoes = Array.from(
+      { length: photoesCount },
       () => getRandomItem<string>(this.mockData.images)
     ).join(';');
     const isPremium = getRandomBoolean().toString();
     const isFavorite = getRandomBoolean().toString();
-    const rating = generateRandomValue(MIN_RATING, MAX_RATING, 1).toString();
-    const type = getRandomItem([...HOUSING_TYPE]).toString();
-    const bedrooms = generateRandomValue(MIN_ROOMS, MAX_ROOMS).toString();
-    const maxAdults = generateRandomValue(MIN_ADULTS, MAX_ADULTS).toString();
-    const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
+    const rate = generateRandomValue(RATING_LIMITS.MIN, RATING_LIMITS.MAX, 1).toString();
+    const type = getRandomItem([...HOUSING_TYPES]).toString();
+    const bedroomsCount = generateRandomValue(ROOM_LIMITS.MIN, ROOM_LIMITS.MAX).toString();
+    const maxAdults = generateRandomValue(GUEST_LIMITS.MIN, GUEST_LIMITS.MAX).toString();
+    const rentCost = generateRandomValue(PRICE_LIMITS.MIN, PRICE_LIMITS.MAX).toString();
     const selectedGoods = getRandomItems([...GOODS]).join(';');
     const authorName = shortenName(getRandomItem<string>(this.mockData.names).toString());
     const authorEmail = getRandomItem<string>(this.mockData.emails).toString();
     const authorAvatar = getRandomItem<string>(this.mockData.avatarPaths).toString();
-    const authorType = getRandomItem([...USER_TYPE]).toString();
-    const commentsCount = generateRandomValue(MIN_COMMENTS, MAX_COMMENTS).toString();
+    const authorType = getRandomItem([...USER_TYPES]).toString();
+    const commentsCount = generateRandomValue(COMMENT_LIMITS.MIN, COMMENT_LIMITS.MAX).toString();
     const randomCoordinates = generateRandomCoordinate(city);
     const coordinates = { latitude: randomCoordinates.latitude.toString(), longitude: randomCoordinates.longitude.toString() };
     const createdDate = dayjs()
-      .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
+      .subtract(generateRandomValue(WEEK_DAYS.FIRST, WEEK_DAYS.LAST), 'day')
       .toISOString();
 
     return [
@@ -66,15 +60,15 @@ export class TSVOfferGenerator implements OfferGenerator {
       description,
       createdDate,
       city,
-      previewImage,
-      images,
+      previewPhoto,
+      photoes,
       isPremium,
       isFavorite,
-      rating,
+      rate,
       type,
-      bedrooms,
+      bedroomsCount,
       maxAdults,
-      price,
+      rentCost,
       selectedGoods,
       authorName,
       authorEmail,
