@@ -6,6 +6,7 @@ import { Component } from '../../types/index.js';
 import { CommentService } from './comment-service.interface.js';
 import { OfferService } from '../offer/offer-service.interface.js';
 import { fillDTO } from '../../helpers/index.js';
+import { getAuthenticatedUserId } from '../../helpers/auth.helper.js'; // Импорт хелпера
 import { CommentRdo } from './rdo/comment.rdo.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
 import { ValidateObjectIdMiddleware } from '../../libs/rest/middleware/validate-objectid.middleware.js';
@@ -56,11 +57,7 @@ export class CommentController extends BaseController {
   public async create(req: Request, res: Response): Promise<void> {
     const { offerId } = req.params;
     const body = req.body as CreateCommentDto;
-
-    if (!req.tokenPayload) {
-      throw new Error('User not authenticated');
-    }
-    const { id: userId } = req.tokenPayload;
+    const userId = getAuthenticatedUserId(req);
 
     const comment = await this.commentService.create({
       ...body,

@@ -1,43 +1,32 @@
 import { defaultClasses, getModelForClass, modelOptions, prop, Ref, PropType } from '@typegoose/typegoose';
-import { Good, City, HousingType } from '../../types/index.js';
+import { HousingType, HOUSING_TYPES, Good, GOODS} from '../../constants/housing.constants.js';
+import { City } from '../../constants/cities.constants.js';
 import { UserEntity } from '../user/index.js';
 import {
-  HOUSING_TYPE,
-  GOODS,
-  MIN_TITLE_LENGTH,
-  MAX_TITLE_LENGTH,
-  MIN_DESCRIPTION_LENGTH,
-  MAX_DESCRIPTION_LENGTH,
-  MIN_RATING,
-  MAX_RATING,
-  MIN_ROOMS,
-  MAX_ROOMS,
-  MIN_ADULTS,
-  MAX_ADULTS,
-  MIN_PRICE,
-  MAX_PRICE,
-  MIN_LATITUDE,
-  MAX_LATITUDE,
-  MIN_LONGITUDE,
-  MAX_LONGITUDE
-} from '../../constants/app.constants.js';
+  TEXT_LIMITS,
+  COORDINATE_LIMITS,
+  PRICE_LIMITS,
+  RATING_LIMITS,
+  ROOM_LIMITS,
+  GUEST_LIMITS,
+} from '../../constants/index.js';
 
 export class CitySchema {
   @prop({ required: true, type: () => String })
   public name!: string;
 
-  @prop({ required: true, type: () => Number, min: MIN_LATITUDE, max: MAX_LATITUDE })
+  @prop({ required: true, type: () => Number, min: COORDINATE_LIMITS.MIN_LATITUDE, max: COORDINATE_LIMITS.MAX_LATITUDE })
   public latitude!: number;
 
-  @prop({ required: true, type: () => Number, min: MIN_LONGITUDE, max: MAX_LONGITUDE })
+  @prop({ required: true, type: () => Number, min: COORDINATE_LIMITS.MIN_LONGITUDE, max: COORDINATE_LIMITS.MAX_LONGITUDE })
   public longitude!: number;
 }
 
 export class LocationSchema {
-  @prop({ required: true, type: () => Number, min: MIN_LATITUDE, max: MAX_LATITUDE })
+  @prop({ required: true, type: () => Number, min: COORDINATE_LIMITS.MIN_LATITUDE, max: COORDINATE_LIMITS.MAX_LATITUDE })
   public latitude!: number;
 
-  @prop({ required: true, type: () => Number, min: MIN_LONGITUDE, max: MAX_LONGITUDE })
+  @prop({ required: true, type: () => Number, min: COORDINATE_LIMITS.MIN_LONGITUDE, max: COORDINATE_LIMITS.MAX_LONGITUDE })
   public longitude!: number;
 }
 
@@ -68,8 +57,8 @@ export interface OfferEntity extends defaultClasses.Base {}
 export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
-    minlength: MIN_TITLE_LENGTH,
-    maxlength: MAX_TITLE_LENGTH,
+    minlength: TEXT_LIMITS.MIN_TITLE_LENGTH,
+    maxlength: TEXT_LIMITS.MAX_TITLE_LENGTH,
     trim: true,
     type: () => String
   })
@@ -77,8 +66,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    minlength: MIN_DESCRIPTION_LENGTH,
-    maxlength: MAX_DESCRIPTION_LENGTH,
+    minlength: TEXT_LIMITS.MIN_DESCRIPTION_LENGTH,
+    maxlength: TEXT_LIMITS.MAX_DESCRIPTION_LENGTH,
     trim: true,
     type: () => String
   })
@@ -127,8 +116,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    min: MIN_RATING,
-    max: MAX_RATING,
+    min: RATING_LIMITS.MIN,
+    max: RATING_LIMITS.MAX,
     default: 1,
     type: () => Number
   })
@@ -136,9 +125,9 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    enum: HOUSING_TYPE,
+    enum: HOUSING_TYPES,
     validate: {
-      validator: (v: string) => HOUSING_TYPE.includes(v as typeof HOUSING_TYPE[number]),
+      validator: (v: string) => HOUSING_TYPES.includes(v as typeof HOUSING_TYPES[number]),
       message: 'Invalid place type'
     },
     type: () => String
@@ -147,24 +136,24 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    min: MIN_ROOMS,
-    max: MAX_ROOMS,
+    min: ROOM_LIMITS.MIN,
+    max: ROOM_LIMITS.MAX,
     type: () => Number
   })
   public bedrooms!: number;
 
   @prop({
     required: true,
-    min: MIN_ADULTS,
-    max: MAX_ADULTS,
+    min: GUEST_LIMITS.MIN,
+    max: GUEST_LIMITS.MAX,
     type: () => Number
   })
   public maxAdults!: number;
 
   @prop({
     required: true,
-    min: MIN_PRICE,
-    max: MAX_PRICE,
+    min: PRICE_LIMITS.MIN,
+    max: PRICE_LIMITS.MAX,
     type: () => Number
   })
   public price!: number;

@@ -1,26 +1,26 @@
 import { IsString, IsEmail, IsEnum, MinLength, MaxLength, IsOptional, Matches } from 'class-validator';
-import { UserType } from '../../../types/index.js';
-import { USER_TYPE } from '../../../constants/app.constants.js';
+import { USER_TYPES, UserType } from '../../../constants/index.js';
+import { CreateUserValidationMessage } from './create-user.messages.js';
 
 export class CreateUserDto {
-  @IsString()
-  @MinLength(1, { message: 'Name must be at least 1 character' })
-  @MaxLength(15, { message: 'Name must be at most 15 characters' })
+  @IsString({ message: CreateUserValidationMessage.name.minLength })
+  @MinLength(1, { message: CreateUserValidationMessage.name.minLength })
+  @MaxLength(15, { message: CreateUserValidationMessage.name.maxLength })
   public name!: string;
 
-  @IsEmail({}, { message: 'Invalid email format' })
+  @IsEmail({}, { message: CreateUserValidationMessage.email.invalidFormat })
   public email!: string;
 
   @IsOptional()
-  @IsString()
-  @Matches(/\.(jpg|png)$/i, { message: 'Avatar must be a JPG or PNG image' })
+  @IsString({ message: CreateUserValidationMessage.avatarUrl.invalidFormat })
+  @Matches(/\.(jpg|png)$/i, { message: CreateUserValidationMessage.avatarUrl.invalidFormat })
   public avatarUrl?: string;
 
-  @IsString()
-  @MinLength(6, { message: 'Password must be at least 6 characters' })
-  @MaxLength(12, { message: 'Password must be at most 12 characters' })
+  @IsString({ message: CreateUserValidationMessage.password.minLength })
+  @MinLength(6, { message: CreateUserValidationMessage.password.minLength })
+  @MaxLength(12, { message: CreateUserValidationMessage.password.maxLength })
   public password!: string;
 
-  @IsEnum(USER_TYPE, { message: 'Invalid user type' })
+  @IsEnum(USER_TYPES, { message: CreateUserValidationMessage.type.invalid })
   public type!: UserType;
 }

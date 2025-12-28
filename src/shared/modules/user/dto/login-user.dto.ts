@@ -1,11 +1,12 @@
 import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { LoginUserValidationMessage } from './login-user.messages.js';
 
 export class LoginUserDto {
-  @IsEmail({}, { message: 'Invalid email format' })
+  @IsEmail({}, { message: LoginUserValidationMessage.email.invalidFormat })
   public email!: string;
 
-  @IsString()
-  @MinLength(6, { message: 'Password must be at least 6 characters' })
-  @MaxLength(12, { message: 'Password must be at most 12 characters' })
+  @IsString({ message: LoginUserValidationMessage.password.minLength })
+  @MinLength(6, { message: LoginUserValidationMessage.password.minLength })
+  @MaxLength(12, { message: LoginUserValidationMessage.password.maxLength })
   public password!: string;
 }

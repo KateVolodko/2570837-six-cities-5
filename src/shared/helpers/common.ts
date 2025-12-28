@@ -1,4 +1,4 @@
-import { CITIES } from '../constants/app.constants.js';
+import { CITIES } from '../constants/index.js';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 
 export function generateRandomValue(min: number, max: number, numAfterDigit = 0) {
@@ -21,11 +21,11 @@ export function getRandomBoolean(): boolean {
 
 export function generateRandomCoordinate(cityName?: string): { latitude: number; longitude: number } {
   const city = cityName
-    ? CITIES.find((c) => c.name === cityName) || getRandomItem([...CITIES])
+    ? CITIES.find((c) => c.NAME === cityName) || getRandomItem([...CITIES])
     : getRandomItem([...CITIES]);
   return {
-    latitude: city.latitude + generateRandomValue(-0.008, 0.008, 6),
-    longitude: city.longitude + generateRandomValue(-0.008, 0.008, 6),
+    latitude: city.LATITUDE + generateRandomValue(-0.008, 0.008, 6),
+    longitude: city.LONGITUDE + generateRandomValue(-0.008, 0.008, 6),
   };
 }
 

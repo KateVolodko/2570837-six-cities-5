@@ -1,5 +1,5 @@
 import { Offer } from '../types/index.js';
-import { CITIES, GOODS, HOUSING_TYPE, USER_TYPE } from '../constants/app.constants.js';
+import { CITIES, GOODS, HOUSING_TYPES, USER_TYPES } from '../constants/index.js';
 import { isKey, findCity } from '../types/offer.type.js';
 
 export function createOffer(offerData: string): Offer {
@@ -7,7 +7,7 @@ export function createOffer(offerData: string): Offer {
     title,
     description,
     postDate,
-    city,
+    cityName,
     previewImage,
     images,
     isPremium,
@@ -27,20 +27,22 @@ export function createOffer(offerData: string): Offer {
     longitude
   ] = offerData.replace('\r\n', '').split('\t');
 
+  const city = findCity(cityName) ?? CITIES[0];
+
   return {
     title,
     description,
-    postDate: new Date(postDate),
-    city: findCity(city) ?? CITIES[0],
-    previewImage,
-    images: images.split(';'),
+    date: new Date(postDate),
+    city,
+    previewPhoto: previewImage,
+    photoes: images.split(';'),
     isPremium: isPremium === 'true',
     isFavorite: isFavorite === 'true',
-    rating: parseFloat(rating),
-    type: isKey(type, HOUSING_TYPE) ?? HOUSING_TYPE[0],
-    bedrooms: parseInt(bedrooms, 10),
+    rate: parseFloat(rating),
+    type: isKey(type, HOUSING_TYPES) ?? HOUSING_TYPES[0],
+    bedroomsCount: parseInt(bedrooms, 10),
     maxAdults: parseInt(maxAdults, 10),
-    price: parseInt(price, 10),
+    rentCost: parseInt(price, 10),
     goods: goods.split(';')
       .map((g) => isKey(g, GOODS))
       .filter((item): item is typeof GOODS[number] => item !== undefined),
@@ -49,7 +51,7 @@ export function createOffer(offerData: string): Offer {
       email: authorEmail,
       avatarUrl: authorAvatar,
       password: '',
-      type: isKey(authorType, USER_TYPE) ?? USER_TYPE[0]
+      type: isKey(authorType, USER_TYPES) ?? USER_TYPES[0]
     },
     commentsCount: parseInt(commentsCount, 10),
     location: {

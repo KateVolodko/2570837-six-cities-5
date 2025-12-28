@@ -9,7 +9,7 @@ import { UserEntity } from '../user/user.entity.js';
 import { Types } from 'mongoose';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
-import { DEFAULT_OFFER_COUNT, PREMIUM_OFFER_COUNT } from '../../constants/app.constants.js';
+import { DEFAULT_COUNTS } from '../../constants/index.js';
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -80,7 +80,7 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async find(limit?: number, userId?: string): Promise<DocumentType<OfferEntity>[]> {
-    const offerLimit = limit ?? DEFAULT_OFFER_COUNT;
+    const offerLimit = limit ?? DEFAULT_COUNTS.OFFER_COUNT;
     const offers = await this.offerModel
       .find()
       .sort({ postDate: -1 })
@@ -107,7 +107,7 @@ export class DefaultOfferService implements OfferService {
     const offers = await this.offerModel
       .find({ 'city.name': cityName, isPremium: true })
       .sort({ postDate: -1 })
-      .limit(PREMIUM_OFFER_COUNT)
+      .limit(DEFAULT_COUNTS.PREMIUM_OFFER_COUNT)
       .populate('authorId')
       .exec();
     if (userId) {

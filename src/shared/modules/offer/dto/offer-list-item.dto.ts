@@ -1,4 +1,5 @@
-import { City, HousingType } from '../../../types/index.js';
+import { City } from '../../../constants/cities.constants.js';
+import { HousingType } from '../../../constants/housing.constants.js';
 
 export class OfferListItemDto {
   public id!: string;

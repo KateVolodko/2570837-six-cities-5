@@ -15,99 +15,99 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { HousingType, Good } from '../../../types/index.js';
-import { HOUSING_TYPE, GOODS } from '../../../constants/app.constants.js';
+import { HousingType, HOUSING_TYPES, Good, GOODS} from '../../../constants/housing.constants.js';
+import { UpdateOfferValidationMessage } from './update-offer.messages.js';
 
 class CityDto {
-  @IsString()
+  @IsString({ message: UpdateOfferValidationMessage.city.invalidFormat })
   public name!: string;
 
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
+  @IsNumber({}, { message: UpdateOfferValidationMessage.city.invalidFormat })
+  @Min(-90, { message: UpdateOfferValidationMessage.city.invalidFormat })
+  @Max(90, { message: UpdateOfferValidationMessage.city.invalidFormat })
   public latitude!: number;
 
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
+  @IsNumber({}, { message: UpdateOfferValidationMessage.city.invalidFormat })
+  @Min(-180, { message: UpdateOfferValidationMessage.city.invalidFormat })
+  @Max(180, { message: UpdateOfferValidationMessage.city.invalidFormat })
   public longitude!: number;
 }
 
 class LocationDto {
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
+  @IsNumber({}, { message: UpdateOfferValidationMessage.location.invalidFormat })
+  @Min(-90, { message: UpdateOfferValidationMessage.location.invalidFormat })
+  @Max(90, { message: UpdateOfferValidationMessage.location.invalidFormat })
   public latitude!: number;
 
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
+  @IsNumber({}, { message: UpdateOfferValidationMessage.location.invalidFormat })
+  @Min(-180, { message: UpdateOfferValidationMessage.location.invalidFormat })
+  @Max(180, { message: UpdateOfferValidationMessage.location.invalidFormat })
   public longitude!: number;
 }
 
 export class UpdateOfferDto {
   @IsOptional()
-  @IsString()
-  @MinLength(10, { message: 'Title must be at least 10 characters' })
-  @MaxLength(100, { message: 'Title must be at most 100 characters' })
+  @IsString({ message: UpdateOfferValidationMessage.title.minLength })
+  @MinLength(10, { message: UpdateOfferValidationMessage.title.minLength })
+  @MaxLength(100, { message: UpdateOfferValidationMessage.title.maxLength })
   public title?: string;
 
   @IsOptional()
-  @IsString()
-  @MinLength(20, { message: 'Description must be at least 20 characters' })
-  @MaxLength(1024, { message: 'Description must be at most 1024 characters' })
+  @IsString({ message: UpdateOfferValidationMessage.description.minLength })
+  @MinLength(20, { message: UpdateOfferValidationMessage.description.minLength })
+  @MaxLength(1024, { message: UpdateOfferValidationMessage.description.maxLength })
   public description?: string;
 
   @IsOptional()
-  @ValidateNested()
+  @ValidateNested({ message: UpdateOfferValidationMessage.city.invalidFormat })
   @Type(() => CityDto)
   public city?: CityDto;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: UpdateOfferValidationMessage.previewImage.invalidFormat })
   public previewImage?: string;
 
   @IsOptional()
-  @IsArray()
-  @ArrayMinSize(6, { message: 'Images must contain exactly 6 items' })
-  @ArrayMaxSize(6, { message: 'Images must contain exactly 6 items' })
-  @IsString({ each: true })
+  @IsArray({ message: UpdateOfferValidationMessage.images.invalidFormat })
+  @ArrayMinSize(6, { message: UpdateOfferValidationMessage.images.minSize })
+  @ArrayMaxSize(6, { message: UpdateOfferValidationMessage.images.maxSize })
+  @IsString({ each: true, message: UpdateOfferValidationMessage.images.invalidItemFormat })
   public images?: string[];
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: UpdateOfferValidationMessage.isPremium.invalidFormat })
   public isPremium?: boolean;
 
   @IsOptional()
-  @IsEnum(HOUSING_TYPE, { message: 'Invalid housing type' })
+  @IsEnum(HOUSING_TYPES, { message: UpdateOfferValidationMessage.type.invalid })
   public type?: HousingType;
 
   @IsOptional()
-  @IsInt()
-  @Min(1, { message: 'Bedrooms must be at least 1' })
-  @Max(8, { message: 'Bedrooms must be at most 8' })
+  @IsInt({ message: UpdateOfferValidationMessage.bedrooms.invalidFormat })
+  @Min(1, { message: UpdateOfferValidationMessage.bedrooms.minValue })
+  @Max(8, { message: UpdateOfferValidationMessage.bedrooms.maxValue })
   public bedrooms?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(1, { message: 'Max adults must be at least 1' })
-  @Max(10, { message: 'Max adults must be at most 10' })
+  @IsInt({ message: UpdateOfferValidationMessage.maxAdults.invalidFormat })
+  @Min(1, { message: UpdateOfferValidationMessage.maxAdults.minValue })
+  @Max(10, { message: UpdateOfferValidationMessage.maxAdults.maxValue })
   public maxAdults?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(100, { message: 'Price must be at least 100' })
-  @Max(100000, { message: 'Price must be at most 100000' })
+  @IsInt({ message: UpdateOfferValidationMessage.price.invalidFormat })
+  @Min(100, { message: UpdateOfferValidationMessage.price.minValue })
+  @Max(100000, { message: UpdateOfferValidationMessage.price.maxValue })
   public price?: number;
 
   @IsOptional()
-  @IsArray()
-  @IsEnum(GOODS, { each: true, message: 'Invalid amenity' })
-  @ArrayMinSize(1, { message: 'At least one amenity is required' })
+  @IsArray({ message: UpdateOfferValidationMessage.goods.invalidFormat })
+  @IsEnum(GOODS, { each: true, message: UpdateOfferValidationMessage.goods.invalidItem })
+  @ArrayMinSize(1, { message: UpdateOfferValidationMessage.goods.minSize })
   public goods?: Good[];
 
   @IsOptional()
-  @ValidateNested()
+  @ValidateNested({ message: UpdateOfferValidationMessage.location.invalidFormat })
   @Type(() => LocationDto)
   public location?: LocationDto;
 }

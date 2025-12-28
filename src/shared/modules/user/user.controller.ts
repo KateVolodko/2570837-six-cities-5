@@ -7,6 +7,7 @@ import { Component } from '../../types/index.js';
 import { UserService } from './user-service.interface.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { fillDTO } from '../../helpers/index.js';
+import { getAuthenticatedUser } from '../../helpers/auth.helper.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
@@ -16,6 +17,7 @@ import { ValidateObjectIdMiddleware } from '../../libs/rest/middleware/validate-
 import { UploadFileMiddleware } from '../../libs/rest/middleware/upload-file.middleware.js';
 import { DocumentExistsMiddleware } from '../../libs/rest/middleware/document-exists.middleware.js';
 import { PrivateRouteMiddleware } from '../../libs/rest/middleware/private-route.middleware.js';
+import { PublicRouteMiddleware } from '../../libs/rest/middleware/public-route.middleware.js';
 import { AuthService } from '../auth/index.js';
 
 @injectable()
@@ -32,7 +34,10 @@ export class UserController extends BaseController {
       path: '/register',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+      middlewares: [
+        new PublicRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateUserDto)
+      ]
     });
     this.addRoute({
       path: '/login',
@@ -77,7 +82,10 @@ export class UserController extends BaseController {
       );
     }
 
-    const result = await this.userService.create(body, this.configService.get('SALT'));
+    const result = await this.userService.create(
+      body,
+      this.configService.get('SALT')
+    );
     this.created(res, fillDTO(UserRdo, result));
   }
 
@@ -85,24 +93,21 @@ export class UserController extends BaseController {
     const body = req.body as LoginUserDto;
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    this.ok(res, fillDTO(LoggedUserRdo, { email: user.email, token }));
+    this.ok(res, fillDTO(LoggedUserRdo, {
+      email: user.email,
+      token
+    }));
   }
 
   public async logout(_req: Request, res: Response): Promise<void> {
-    this.noContent(res, { message: 'Logged out successfully' });
+    this.noContent(res, {
+      message: 'Logged out successfully'
+    });
   }
 
   public async checkAuth(req: Request, res: Response): Promise<void> {
-    if (!req.tokenPayload) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'User not authenticated',
-        'UserController'
-      );
-    }
-
-    const { id: userId } = req.tokenPayload;
-    const user = await this.userService.findById(userId);
+    const userPayload = getAuthenticatedUser(req);
+    const user = await this.userService.findById(userPayload.id);
 
     if (!user) {
       throw new HttpError(
@@ -129,6 +134,8 @@ export class UserController extends BaseController {
     const avatar = req.file.filename;
     await this.userService.updateById(userId, { avatar });
 
-    this.created(res, { filepath: avatar });
+    this.created(res, {
+      filepath: avatar
+    });
   }
 }

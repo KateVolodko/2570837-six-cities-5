@@ -1,14 +1,15 @@
 import { IsString, IsInt, Min, Max, MinLength, MaxLength } from 'class-validator';
+import { CreateCommentValidationMessage } from './create-comment.messages.js';
 
 export class CreateCommentDto {
-  @IsString()
-  @MinLength(5, { message: 'Comment must be at least 5 characters' })
-  @MaxLength(1024, { message: 'Comment must be at most 1024 characters' })
+  @IsString({ message: CreateCommentValidationMessage.text.minLength })
+  @MinLength(5, { message: CreateCommentValidationMessage.text.minLength })
+  @MaxLength(1024, { message: CreateCommentValidationMessage.text.maxLength })
   public text!: string;
 
-  @IsInt()
-  @Min(1, { message: 'Rating must be at least 1' })
-  @Max(5, { message: 'Rating must be at most 5' })
+  @IsInt({ message: CreateCommentValidationMessage.rating.invalidFormat })
+  @Min(1, { message: CreateCommentValidationMessage.rating.minValue })
+  @Max(5, { message: CreateCommentValidationMessage.rating.maxValue })
   public rating!: number;
 
   public offerId!: string;
