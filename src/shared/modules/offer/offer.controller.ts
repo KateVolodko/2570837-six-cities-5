@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpMethod } from '../../libs/rest/index.js';
+import { BaseController, HttpMethod, HttpError } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService } from './offer-service.interface.js';
@@ -14,6 +14,8 @@ import { ValidateDtoMiddleware } from '../../libs/rest/middleware/validate-dto.m
 import { DocumentExistsMiddleware } from '../../libs/rest/middleware/document-exists.middleware.js';
 import { PrivateRouteMiddleware } from '../../libs/rest/middleware/private-route.middleware.js';
 import { CommentService } from '../comment/comment-service.interface.js';
+import { CheckOwnerMiddleware } from '../../libs/rest/middleware/check-owner.middleware.js';
+import { StatusCodes } from 'http-status-codes';
 
 @injectable()
 export class OfferController extends BaseController {
@@ -59,8 +61,9 @@ export class OfferController extends BaseController {
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
-        new ValidateDtoMiddleware(UpdateOfferDto),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+        new CheckOwnerMiddleware(this.offerService, 'offerId'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
       ]
     });
     this.addRoute({
@@ -104,8 +107,16 @@ export class OfferController extends BaseController {
 
   public async create(req: Request, res: Response): Promise<void> {
     const body = req.body as CreateOfferDto;
-    const { id: userId } = req.tokenPayload!;
-    const result = await this.offerService.create({ ...body, authorId: userId });
+    const tokenPayload = req.tokenPayload;
+
+    if (!tokenPayload?.id) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'User not authenticated'
+      );
+    }
+
+    const result = await this.offerService.create({ ...body, authorId: tokenPayload.id });
     this.created(res, fillDTO(OfferRdo, result));
   }
 
@@ -138,8 +149,16 @@ export class OfferController extends BaseController {
   }
 
   public async getFavorites(req: Request, res: Response): Promise<void> {
-    const { id: userId } = req.tokenPayload!;
-    const offers = await this.offerService.findFavorites(userId);
+    const tokenPayload = req.tokenPayload;
+
+    if (!tokenPayload?.id) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'User not authenticated'
+      );
+    }
+
+    const offers = await this.offerService.findFavorites(tokenPayload.id);
     this.ok(res, fillDTO(OfferListItemRdo, offers));
   }
 
@@ -148,15 +167,31 @@ export class OfferController extends BaseController {
     res: Response
   ): Promise<void> {
     const { offerId } = req.params;
-    const { id: userId } = req.tokenPayload!;
-    const offer = await this.offerService.addToFavorites(offerId, userId);
+    const tokenPayload = req.tokenPayload;
+
+    if (!tokenPayload?.id) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'User not authenticated'
+      );
+    }
+
+    const offer = await this.offerService.addToFavorites(offerId, tokenPayload.id);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
   public async removeFromFavorites(req: Request, res: Response): Promise<void> {
     const { offerId } = req.params;
-    const { id: userId } = req.tokenPayload!;
-    const offer = await this.offerService.removeFromFavorites(offerId, userId);
+    const tokenPayload = req.tokenPayload;
+
+    if (!tokenPayload?.id) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'User not authenticated'
+      );
+    }
+
+    const offer = await this.offerService.removeFromFavorites(offerId, tokenPayload.id);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 }

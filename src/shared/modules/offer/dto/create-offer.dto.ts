@@ -95,7 +95,7 @@ export class CreateOfferDto {
   public goods!: Good[];
 
   @IsString()
-  public authorId!: string;
+  public authorId?: string;
 
   @ValidateNested()
   @Type(() => LocationDto)
